@@ -1,8 +1,5 @@
 pipeline{
     agent any
-     environment{
-        dockerhub=credentials('dockerhub')
-     }
     tools { 
         maven 'maven3'
     }

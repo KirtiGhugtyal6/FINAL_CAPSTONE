@@ -1,7 +1,8 @@
 pipeline{
-	agent {
-		label "slave1"
-	}
+    agent any
+     environment{
+        dockerhub=credentials('dockerhub')
+     }
     tools { 
         maven 'maven3'
     }
@@ -20,22 +21,13 @@ pipeline{
                 }
                 
             }
-            stage("TEST")
+             stage("TEST")
             {
                 steps{
                     sh "mvn test"
                 }
-            }
-            stage("package")
-            {
-                steps{
-                    sh "mvn package"
-		    sh "pwd"
-		    sh "ls -la"
-		    sh "ls -R"
-			
-                }
             } 
 
+
         }
-} 
+}        

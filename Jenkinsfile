@@ -1,9 +1,11 @@
 pipeline{
-	agent {
-		label "slave1"
-	}
+    agent any
+     environment{
+        dockerhub=credentials('dockerhub')
+     }
     tools { 
         maven 'maven3'
+        // Docker 'docker'
     }
     stages
        {
@@ -20,22 +22,36 @@ pipeline{
                 }
                 
             }
-            stage("TEST")
+             stage("TEST")
             {
                 steps{
                     sh "mvn test"
                 }
-            }
-            stage("package")
+            } 
+             stage("package")
             {
                 steps{
                     sh "mvn package"
-		    sh "pwd"
-		    sh "ls -la"
-		    sh "ls -R"
-			
                 }
             } 
-
+             stage("building docker image"){
+                    steps{
+                        script{
+                            dockerImage = docker.build dockerhub_repo + ":$GIT_COMMIT-build-$BUILD_NUMBER"
+                        }
+                       
+                     }    
+                }
+            stage("Pushing the docker image"){
+                    steps{
+                        script {
+                            docker.withRegistry('', dockerhub_creds){
+                                dockerImage.push()
+                                // dockerImage.push('latest')
+                                // dockerImage.push('v1')
+                            }
+                        }
+                    }
+                }    
         }
-} 
+}      

@@ -48,7 +48,7 @@ pipeline{
                     steps{
                         script {
                             docker.withRegistry('', dockerhub_creds){
-                                dockerImage.push()
+                                dockerImage.push('latest')
                             }
                         }
                     }

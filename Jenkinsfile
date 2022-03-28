@@ -5,7 +5,7 @@ pipeline{
         dockerhub_creds = 'e9f78131-b451-409e-844d-21da4dd448ed'
         dockerImage = ''
      }
-    tools { 
+ tools { 
         maven 'maven3'
     }
     stages
@@ -27,9 +27,51 @@ pipeline{
             {
                 steps{
                     sh "mvn test"
+ 
                 }
             } 
-
-
+             stage("package")
+            {
+                steps{
+                    sh "mvn package"
+                }
+            } 
+             stage("building docker image"){
+                 when{
+                     branch 'main'
+                 }
+                    steps{
+                        script{
+                            dockerImage = docker.build dockerhub_repo + ":$GIT_COMMIT-build-$BUILD_NUMBER"
+                        }
+                       
+                     }    
+                }
+            stage("Pushing the docker image"){
+                when{
+                    branch 'main'
+                }
+                    steps{
+                        script {
+                            docker.withRegistry('', dockerhub_creds){
+                                dockerImage.push('latest')
+                            }
+                        }
+                    }
+                } 
+             stage("Deploying"){
+                 when{
+                    branch 'main'
+                }
+                    steps{
+                        withKubeConfig([credentialsId: 'kube-config']){
+                            sh 'pwd && ls'
+                            sh 'kubectl apply -f kubernetes/mongodb/mongodb.yml'
+                            sh 'kubectl apply -f kubernetes/app/deployment.yml'
+                            sh 'kubectl apply -f kubernetes/app/nodeport.yml'
+                            sh 'kubectl get all'
+                        }
+                    }
+                }
         }
-}        
+}      

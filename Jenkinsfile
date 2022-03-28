@@ -57,7 +57,7 @@ pipeline{
                     steps{
                         withKubeConfig([credentialsId: 'kube-config']){
                             sh 'pwd && ls'
-                            sh 'kubectl apply -f kubernetes/mongodb/mongo.yml'
+                            sh 'kubectl apply -f kubernetes/mongodb/mongodb.yml'
                             sh 'kubectl apply -f kubernetes/app/app.yml'
                             sh 'kubectl apply -f kubernetes/app/nodeport.yml'
                             sh 'kubectl get all'

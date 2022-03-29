@@ -14,13 +14,13 @@ services:
     command: mongod --bind_ip_all --logpath=/dev/null # --quiet
 
   web:
-    image: kirtighugtyal/final_capstone
+    build: .
     links:
       - mongodb
     container_name: BRS-Service
     restart: on-failure
     ports:
-      - "8090:8080"
+      - "8092:8080"
     environment:
       - MONGODB_PORT=27017
       - MONGODB_SCHEMA=brs

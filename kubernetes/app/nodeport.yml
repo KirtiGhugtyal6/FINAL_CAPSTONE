@@ -10,6 +10,6 @@ spec:
   selector:
     app: myapp
   ports:
-  - port: 8090
-    targetPort: 8090
+  - port: 8092
+    targetPort: 8092
     nodePort: 32400

@@ -14,7 +14,7 @@ services:
     command: mongod --bind_ip_all --logpath=/dev/null # --quiet
 
   web:
-    build: .
+    image: kirtighugtyal/final_capstone
     links:
       - mongodb
     container_name: BRS-Service
